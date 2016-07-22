@@ -1,8 +1,3 @@
-/**
- * 
- */
-package com.flatironschool.javacs;
-
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 

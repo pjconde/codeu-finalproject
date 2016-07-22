@@ -1,5 +1,3 @@
-package com.flatironschool.javacs;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,7 +42,7 @@ public class WikiSearch {
 	/**
 	 * Prints the contents in order of term frequency.
 	 * 
-	 * @param map
+	 * @param
 	 */
 	private  void print() {
 		List<Entry<String, Integer>> entries = sort();
@@ -61,7 +59,7 @@ public class WikiSearch {
 	 */
 	public WikiSearch or(WikiSearch that) {
         // FILL THIS IN!
-        Map<String, Integer> outputMap = new HashMap<>(map);
+        Map<String, Integer> outputMap = new HashMap<String, Integer>(map);
         for (String key : that.map.keySet()) {
         	int rel = totalRelevance(this.getRelevance(key), that.getRelevance(key));
         	outputMap.put(key, rel);
@@ -78,7 +76,7 @@ public class WikiSearch {
 	 */
 	public WikiSearch and(WikiSearch that) {
         // FILL THIS IN!
-        Map<String, Integer> outputMap = new HashMap<>();
+        Map<String, Integer> outputMap = new HashMap<String, Integer>();
         for(String key : this.map.keySet()) {
         	if (that.map.containsKey(key) && key != null) {
 	        	int rel = totalRelevance(this.getRelevance(key), that.getRelevance(key));
@@ -97,7 +95,7 @@ public class WikiSearch {
 	 */
 	public WikiSearch minus(WikiSearch that) {
         // FILL THIS IN!
-        Map<String, Integer> outputMap = new HashMap<>(map);
+        Map<String, Integer> outputMap = new HashMap<String, Integer>(map);
         for(String key : this.map.keySet()) {
 	    	if (that.map.containsKey(key)) {
 	        	outputMap.remove(key);	
