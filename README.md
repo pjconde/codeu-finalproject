@@ -1,5 +1,4 @@
 # CodeU Final Project 2016
- ### CS 2340
  
  ### TEAM MEMBERS:
    - Agustin Lau
