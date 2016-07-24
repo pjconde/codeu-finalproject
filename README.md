@@ -1,6 +1,6 @@
 # CodeU Final Project 2016
  
- ### TEAM MEMBERS:
+### TEAM MEMBERS:
    - Agustin Lau
    - Pablojose (PJ) Conde
  
