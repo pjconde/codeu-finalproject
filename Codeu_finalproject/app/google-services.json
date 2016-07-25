@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "277316906579",
+    "firebase_url": "https://codeu-final-project-2016.firebaseio.com",
+    "project_id": "codeu-final-project-2016",
+    "storage_bucket": "codeu-final-project-2016.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277316906579:android:1c9d21c841f24558",
+        "android_client_info": {
+          "package_name": "com.a2016.codeu.codeu_finalproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277316906579-poosscuamdua1s155desf84o3lv1a74d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAksJjit_xWxal5TrxlI3raSxS7vXguWo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,14 +8,22 @@ public class SearchResult {
 
     private String url;
     private String snip;
+    private String term;
+    private int rel;
 
-    public SearchResult(String url, String snip) {
+    public SearchResult() {
+
+    }
+
+    public SearchResult(String term, String url, int rel, String snip) {
+        this.term = term;
         this.url = url;
+        this.rel = rel;
         this.snip = snip;
     }
 
-    public SearchResult(String url) {
-        this(url, "No snip");
+    public SearchResult(String term, int rel, String url) {
+        this(term, url, rel, "No snip");
     }
 
     public String getSnip() {
@@ -32,5 +40,21 @@ public class SearchResult {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
+    public int getRel() {
+        return rel;
+    }
+
+    public void setRel(int rel) {
+        this.rel = rel;
     }
 }

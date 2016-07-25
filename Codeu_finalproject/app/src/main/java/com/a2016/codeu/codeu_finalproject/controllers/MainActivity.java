@@ -1,7 +1,9 @@
 package com.a2016.codeu.codeu_finalproject.controllers;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.constraint.solver.widgets.Snapshot;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +15,10 @@ import android.view.MenuItem;
 import android.widget.EditText;
 
 import com.a2016.codeu.codeu_finalproject.R;
-import com.a2016.codeu.codeu_finalproject.models.JedisIndex;
-import com.a2016.codeu.codeu_finalproject.models.JedisMaker;
+import com.a2016.codeu.codeu_finalproject.models.ResultsDB;
 import com.a2016.codeu.codeu_finalproject.models.WikiSearch;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.io.IOException;
 import java.util.Map;
@@ -24,9 +27,20 @@ import redis.clients.jedis.Jedis;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ResultsDB db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Populates firebase DB with pages
+        String[] toBeLoaded = populateLinks();
+        db = new ResultsDB(FirebaseDatabase.getInstance());
+        try {
+            db.loadIntoDB(toBeLoaded);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -39,21 +53,18 @@ public class MainActivity extends AppCompatActivity {
         if (!searchEmpty) {
             // If the search box is not empty we retrieve the string
             String searchWord = searchBox.getText().toString();
+            Query search = WikiSearch.search(searchWord, db);
+            WikiSearch queryPass = new WikiSearch(search);
 
-            Jedis jedis = JedisMaker.make();
-            JedisIndex index = new JedisIndex(jedis);
-
-            Map<String, Integer> tempMap = null;
-            WikiSearch temp = new WikiSearch(tempMap);
-            WikiSearch search = temp.search(searchWord, index);
+            System.out.println(search.toString());
 
             Intent intent = new Intent(this, ResultsActivity.class);
-            intent.putExtra("WS_results", search);
             intent.putExtra("searched", searchWord);
             startActivity(intent);
         }
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -75,4 +86,13 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    // TODO figure out how to add more links without hardcoding page URL
+    private String[] populateLinks() {
+        String[] pages = new String[2];
+        pages[0] = "https://en.wikipedia.org/wiki/Java_(programming_language)";
+        pages[1] = "https://en.wikipedia.org/wiki/Programming_language";
+        return pages;
+    }
+
 }

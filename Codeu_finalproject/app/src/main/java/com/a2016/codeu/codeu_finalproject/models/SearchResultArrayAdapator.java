@@ -32,6 +32,9 @@ public class SearchResultArrayAdapator extends ArrayAdapter<SearchResult> {
         // Get Rating object at this position
         SearchResult current = getItem(position);
 
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.result_item, parent, false);
+        }
         // Look up text views for data population
         TextView result = (TextView) convertView.findViewById(R.id.result_name);
         TextView url = (TextView) convertView.findViewById(R.id.url);

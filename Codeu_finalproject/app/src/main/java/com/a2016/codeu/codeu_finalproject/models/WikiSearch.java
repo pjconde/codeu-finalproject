@@ -1,5 +1,7 @@
 package com.a2016.codeu.codeu_finalproject.models;
 
+import com.google.firebase.database.Query;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
@@ -21,6 +23,8 @@ public class WikiSearch implements Serializable {
 	
 	// map from URLs that contain the term(s) to relevance score
 	private Map<String, Integer> map;
+    private Query q;
+
 
 	/**
 	 * Constructor.
@@ -30,8 +34,20 @@ public class WikiSearch implements Serializable {
 	public WikiSearch(Map<String, Integer> map) {
 		this.map = map;
 	}
-	
-	/**
+
+    public WikiSearch(Query q) {
+        this.q = q;
+    }
+
+    public Query getQ() {
+        return q;
+    }
+
+    public void setQ(Query q) {
+        this.q = q;
+    }
+
+    /**
 	 * Looks up the relevance of a given URL.
 	 * 
 	 * @param url
@@ -141,12 +157,14 @@ public class WikiSearch implements Serializable {
 	 * Performs a search and makes a WikiSearch object.
 	 * 
 	 * @param term
-	 * @param index
 	 * @return
 	 */
-	public static WikiSearch search(String term, JedisIndex index) {
-		Map<String, Integer> map = index.getCounts(term);
-		return new WikiSearch(map);
+	public static Query search(String term, ResultsDB db) {
+        System.out.println("JedisIndex Term: " + term);
+
+        //Map<String, Integer> map = index.getCounts(term);
+        Query temp = db.readResult(term);
+		return temp;
 	}
 
     public Map<String, Integer> getMap() {
@@ -157,27 +175,4 @@ public class WikiSearch implements Serializable {
         this.map = map;
     }
 
-    public static void main(String[] args) throws IOException {
-		
-		// make a JedisIndex
-		Jedis jedis = JedisMaker.make();
-		JedisIndex index = new JedisIndex(jedis); 
-		
-		// search for the first term
-		String term1 = "java";
-		System.out.println("Query: " + term1);
-		WikiSearch search1 = search(term1, index);
-		search1.print();
-		
-		// search for the second term
-		String term2 = "programming";
-		System.out.println("Query: " + term2);
-		WikiSearch search2 = search(term2, index);
-		search2.print();
-		
-		// compute the intersection of the searches
-		System.out.println("Query: " + term1 + " AND " + term2);
-		WikiSearch intersection = search1.and(search2);
-		intersection.print();
-	}
 }
