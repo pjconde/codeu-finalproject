@@ -1,6 +1,6 @@
-package com.a2016.codeu.codeu_finalproject.controllers;
+package com.a2016.codeu.codeu_finalproject.models;
 
-import com.a2016.codeu.codeu_finalproject.controllers.JedisIndex;
+import com.a2016.codeu.codeu_finalproject.models.JedisIndex;
 
 import java.io.IOException;
 import java.util.LinkedList;

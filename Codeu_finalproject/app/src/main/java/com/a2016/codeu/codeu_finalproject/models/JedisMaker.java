@@ -1,4 +1,4 @@
-package com.a2016.codeu.codeu_finalproject.controllers;
+package com.a2016.codeu.codeu_finalproject.models;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,8 +25,13 @@ public class JedisMaker {
 
 		// assemble the file name
 		String slash = File.separator;
-		String filename = "resources" + slash + "redis_url.txt";
-		URL fileURL = JedisMaker.class.getClassLoader().getResource(filename);
+		//String filename = "Users" + slash + "pj" + slash + "Github" + slash + "Codeu"+ slash +"codeu-finalproject" + slash + "Codeu_finalproject" + "app" + slash + "src" + slash + "main" + slash + "java" + slash + "com" + slash + "a2016" + slash + "codeu" + slash + "codeu_finalproject" + slash + "resources" + slash + "redis_url.txt";
+		String filename = "redis_url.txt";
+        System.out.println(System.getProperty("user.dir"));
+        String temp = "/Users/pj/Github/CodeU/codeu-finalproject/Codeu_finalproject/app/src/main/java/com/a2016/codeu/codeu_finalproject/resources/redis_url.txt";
+
+        URL fileURL = new URL("redistogo:d3645832819bd272517ee7b9dd0bb486@catfish.redistogo.com:10492/");
+                //JedisMaker.class.getClassLoader().getResource(temp);
 
 	  StringBuilder sb = new StringBuilder();
 		BufferedReader br;

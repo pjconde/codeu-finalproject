@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/result_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Result"
+        android:paddingTop="5dp"
+        android:paddingStart= "5dp"
+        android:paddingEnd= "5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:singleLine="true"
+        android:textSize="17sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/result_name"
+        android:text="URL"
+        android:paddingStart="5dp"
+        android:paddingEnd= "5dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:paddingBottom="5dp"
+        android:textSize="15sp"/>
+    <TextView
+        android:id="@+id/snip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/url"
+        android:text="Snip"
+        android:paddingStart="5dp"
+        android:paddingEnd= "5dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:paddingBottom="5dp"
+        android:textSize="15sp"/>
+
+</RelativeLayout>

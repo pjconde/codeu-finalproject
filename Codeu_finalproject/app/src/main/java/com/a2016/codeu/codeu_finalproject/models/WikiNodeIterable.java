@@ -1,4 +1,4 @@
-package com.a2016.codeu.codeu_finalproject.controllers;
+package com.a2016.codeu.codeu_finalproject.models;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

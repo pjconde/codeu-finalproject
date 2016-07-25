@@ -1,6 +1,7 @@
-package com.a2016.codeu.codeu_finalproject.controllers;
+package com.a2016.codeu.codeu_finalproject.models;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import redis.clients.jedis.Jedis;
  * Represents the results of a search query.
  *
  */
-public class WikiSearch {
+public class WikiSearch implements Serializable {
 	
 	// map from URLs that contain the term(s) to relevance score
 	private Map<String, Integer> map;
@@ -148,7 +149,15 @@ public class WikiSearch {
 		return new WikiSearch(map);
 	}
 
-	public static void main(String[] args) throws IOException {
+    public Map<String, Integer> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, Integer> map) {
+        this.map = map;
+    }
+
+    public static void main(String[] args) throws IOException {
 		
 		// make a JedisIndex
 		Jedis jedis = JedisMaker.make();
