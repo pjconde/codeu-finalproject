@@ -40,9 +40,9 @@ public class SearchResultArrayAdapator extends ArrayAdapter<SearchResult> {
         TextView url = (TextView) convertView.findViewById(R.id.url);
         TextView snip = (TextView) convertView.findViewById(R.id.snip);
         // Populate data using SearchResult object
-        result.setText("Result: " + current.getUrl());
-        url.setText("Url: " + "Pending");
-        snip.setText("Snip: " + current.getSnip());
+        result.setText("Result: " + "Pending");
+        url.setText("Url: " + current.getUrl());
+        snip.setText("Snip: " + current.getRel());
         // Return completed view
         return convertView;
     }

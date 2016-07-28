@@ -1,5 +1,7 @@
 package com.a2016.codeu.codeu_finalproject.models;
 
+import com.a2016.codeu.codeu_finalproject.R;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,12 +50,16 @@ public class WikiFetcher {
 	public Elements readWikipedia(String url) throws IOException {
 		URL realURL = new URL(url);
 
+        //TODO **IMPORTANT** connect with jsoup.connect rather than use local copy. Will need to use asynchronous thing
+
 		// assemble the file name
 		String slash = File.separator;
-		String filename = "resources" + slash + realURL.getHost() + realURL.getPath();
+		String filename =  "resources" + slash + realURL.getHost() + realURL.getPath();
 //		// read the file
-//		InputStream stream = WikiFetcher.class.getClassLoader().getResourceAsStream(filename);
+		//InputStream stream = this.(R.raw.Mathematics);
 //        System.out.println(stream);
+
+        //Document doc = Jsoup.parse(stream, "UTF-8", filename);
         File filein = new File(filename);
 		Document doc = Jsoup.parse(filein, "UTF-8", url);
 
@@ -63,6 +69,27 @@ public class WikiFetcher {
 		Elements paras = content.select("p");
 		return paras;
 	}
+
+    //TODO for this below method to work will need to change name of files in raw
+//    public Elements readWikipedia(String url, InputStream stream) throws IOException {
+//        URL realURL = new URL(url);
+//
+//        // assemble the file name
+//        String slash = File.separator;
+//        String filename =  "resources" + slash + realURL.getHost() + realURL.getPath();
+//        // read the file
+//        Document doc = Jsoup.parse(stream, "UTF-8", filename);
+//
+//
+//        //File filein = new File(filename);
+//        //Document doc = Jsoup.parse(filein, "UTF-8", url);
+//
+//
+//        // TODO: factor out the following repeated code
+//        Element content = doc.getElementById("mw-content-text");
+//        Elements paras = content.select("p");
+//        return paras;
+//    }
 
 	/**
 	 * Rate limits by waiting at least the minimum interval between requests.

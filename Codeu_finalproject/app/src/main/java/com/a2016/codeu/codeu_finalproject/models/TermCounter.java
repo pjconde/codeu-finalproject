@@ -76,7 +76,7 @@ public class TermCounter {
 	 */
 	public void processText(String text) {
 		// replace punctuation with spaces, convert to lower case, and split on whitespace
-		String[] array = text.replaceAll("\\pP", " ").toLowerCase().split("\\s+");
+		String[] array = text.replaceAll("\\p{P}", " ").toLowerCase().split("\\s+");
 		
 		for (int i=0; i<array.length; i++) {
 			String term = array[i];
@@ -139,14 +139,14 @@ public class TermCounter {
 	 * @param args
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException {
-		String url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
-		
-		WikiFetcher wf = new WikiFetcher();
-		Elements paragraphs = wf.fetchWikipedia(url);
-		
-		TermCounter counter = new TermCounter(url.toString());
-		counter.processElements(paragraphs);
-		counter.printCounts();
-	}
+//	public static void main(String[] args) throws IOException {
+//		String url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
+//
+//		WikiFetcher wf = new WikiFetcher();
+//		Elements paragraphs = wf.fetchWikipedia(url);
+//
+//		TermCounter counter = new TermCounter(url.toString());
+//		counter.processElements(paragraphs);
+//		counter.printCounts();
+//	}
 }

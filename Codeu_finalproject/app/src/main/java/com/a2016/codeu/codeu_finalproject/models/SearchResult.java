@@ -1,5 +1,8 @@
 package com.a2016.codeu.codeu_finalproject.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by pj on 7/24/16.
  */
@@ -7,31 +10,15 @@ package com.a2016.codeu.codeu_finalproject.models;
 public class SearchResult {
 
     private String url;
-    private String snip;
-    private String term;
     private int rel;
 
     public SearchResult() {
 
     }
 
-    public SearchResult(String term, String url, int rel, String snip) {
-        this.term = term;
+    public SearchResult(String url, int rel) {
         this.url = url;
         this.rel = rel;
-        this.snip = snip;
-    }
-
-    public SearchResult(String term, int rel, String url) {
-        this(term, url, rel, "No snip");
-    }
-
-    public String getSnip() {
-        return snip;
-    }
-
-    public void setSnip(String snip) {
-        this.snip = snip;
     }
 
     public String getUrl() {
@@ -42,14 +29,6 @@ public class SearchResult {
         this.url = url;
     }
 
-    public String getTerm() {
-        return term;
-    }
-
-    public void setTerm(String term) {
-        this.term = term;
-    }
-
     public int getRel() {
         return rel;
     }
@@ -57,4 +36,13 @@ public class SearchResult {
     public void setRel(int rel) {
         this.rel = rel;
     }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("url", url);
+        result.put("rel", rel);
+
+        return result;
+    }
+
 }

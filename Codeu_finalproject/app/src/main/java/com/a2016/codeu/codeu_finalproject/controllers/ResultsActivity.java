@@ -10,14 +10,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.a2016.codeu.codeu_finalproject.R;
 import com.a2016.codeu.codeu_finalproject.models.ResultsDB;
 import com.a2016.codeu.codeu_finalproject.models.SearchResult;
 import com.a2016.codeu.codeu_finalproject.models.SearchResultArrayAdapator;
 import com.a2016.codeu.codeu_finalproject.models.WikiSearch;
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -29,15 +33,16 @@ public class ResultsActivity extends ListActivity {
 
     ResultsDB db;
     String searched;
-    Query results;
+    FirebaseDatabase mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        db = new ResultsDB(FirebaseDatabase.getInstance());
+        this.mDatabase = FirebaseDatabase.getInstance();
+        db = new ResultsDB(mDatabase);
         this.searched = (String) intent.getSerializableExtra("searched");
-        this.results = WikiSearch.search(searched, db);
+        //this.results = WikiSearch.search(searched, db);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
@@ -49,32 +54,34 @@ public class ResultsActivity extends ListActivity {
 
     // Populates the list view with the results
     private void populate() {
-        final ArrayList<SearchResult> resultList = new ArrayList<>();
 
-        ValueEventListener populateListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                 SearchResult result = dataSnapshot.getValue(SearchResult.class);
-                resultList.add(result);
-            }
+        ListView view = (ListView) findViewById(android.R.id.list);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
-            }
+//        ArrayList<SearchResult> resultList = db.readResult(searched);
+//        Log.v("Populate list size", Integer.toString(resultList.size()));
 
-        };
+        DatabaseReference ref = mDatabase.getReference();
+        Query results = ref.child("terms").child(db.generateFBKey(searched)).child("wiki");
+        Log.v("Query", results.toString());
 
-        results.addValueEventListener(populateListener);
+        FirebaseListAdapter<SearchResult> adapter =
+                new FirebaseListAdapter<SearchResult>(this, SearchResult.class,
+                        R.layout.result_item, results) {
+                    @Override
+                    protected void populateView(View v, SearchResult model, int position) {
+                        TextView result = (TextView) v.findViewById(R.id.result_name);
+                        TextView url = (TextView) v.findViewById(R.id.url);
+                        TextView snip = (TextView) v.findViewById(R.id.snip);
 
-//        Map<String, Integer> map = results.getMap();
-//        for (String key: map.keySet()) {
-//            SearchResult current = new SearchResult(key, 1, map.get(key).toString());
-//            resultList.add(current);
-//        }
-        SearchResultArrayAdapator adapter = new SearchResultArrayAdapator(getApplicationContext(),
-                resultList);
-        setListAdapter(adapter);
+                        Log.v("Result URL", model.getUrl());
+                        Log.v("Result snip", String.format("%s", model.getRel()));
+
+                        result.setText("Result: " + "Pending");
+                        url.setText("Url: " + model.getUrl());
+                        snip.setText("Snip: " + model.getRel());
+                    }
+                };
+        view.setAdapter(adapter);
     }
 
 

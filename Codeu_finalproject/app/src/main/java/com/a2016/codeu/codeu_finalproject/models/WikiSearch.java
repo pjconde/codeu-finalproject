@@ -35,18 +35,6 @@ public class WikiSearch implements Serializable {
 		this.map = map;
 	}
 
-    public WikiSearch(Query q) {
-        this.q = q;
-    }
-
-    public Query getQ() {
-        return q;
-    }
-
-    public void setQ(Query q) {
-        this.q = q;
-    }
-
     /**
 	 * Looks up the relevance of a given URL.
 	 * 
@@ -159,13 +147,13 @@ public class WikiSearch implements Serializable {
 	 * @param term
 	 * @return
 	 */
-	public static Query search(String term, ResultsDB db) {
-        System.out.println("JedisIndex Term: " + term);
-
-        //Map<String, Integer> map = index.getCounts(term);
-        Query temp = db.readResult(term);
-		return temp;
-	}
+//	public static Query search(String term, ResultsDB db) {
+//        System.out.println("JedisIndex Term: " + term);
+//
+//        //Map<String, Integer> map = index.getCounts(term);
+//
+//		return temp;
+//	}
 
     public Map<String, Integer> getMap() {
         return map;
