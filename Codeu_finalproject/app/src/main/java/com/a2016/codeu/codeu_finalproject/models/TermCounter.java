@@ -17,13 +17,15 @@ import org.jsoup.select.Elements;
  *
  */
 public class TermCounter {
-	
+
+	private Map<String, Double> tfMap;
 	private Map<String, Integer> map;
 	private String label;
 	
 	public TermCounter(String label) {
 		this.label = label;
-		this.map = new HashMap<String, Integer>();
+		this.map = new HashMap<>();
+        this.tfMap = new HashMap<>();
 	}
 	
 	public String getLabel() {
@@ -33,7 +35,7 @@ public class TermCounter {
 	/**
 	 * Returns the total of all counts.
 	 * 
-	 * @return
+	 * @return total counts
 	 */
 	public int size() {
 		int total = 0;
@@ -42,6 +44,16 @@ public class TermCounter {
 		}
 		return total;
 	}
+
+    public double getTermFrequency(String term) {
+        return get(term)/size();
+    }
+
+    public void createTFMap() {
+        for (String key : keySet()) {
+            tfMap.put(key, getTermFrequency(key));
+        }
+    }
 
 	/**
 	 * Takes a collection of Elements and counts their words.
@@ -94,6 +106,8 @@ public class TermCounter {
 		put(term, get(term) + 1);
 	}
 
+
+
 	/**
 	 * Adds a term to the map with a given count.
 	 * 
@@ -108,7 +122,7 @@ public class TermCounter {
 	 * Returns the count associated with this term, or 0 if it is unseen.
 	 * 
 	 * @param term
-	 * @return
+	 * @return the count associated with this term
 	 */
 	public Integer get(String term) {
 		Integer count = map.get(term);
