@@ -88,16 +88,6 @@ public class TermCounter {
 //        }
 //	}
 
-    public void processMap(Elements paragraphs) {
-        for (Node root : paragraphs) {
-            for (Node node: new WikiNodeIterable(root)) {
-                if (node instanceof TextNode) {
-                    processText(((TextNode) node).text());
-                }
-            }
-        }
-    }
-
 	/**
 	 * Takes a collection of Elements and counts their words.
 	 * 
