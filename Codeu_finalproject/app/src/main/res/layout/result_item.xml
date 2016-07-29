@@ -15,12 +15,14 @@
         android:paddingRight="5dp"
         android:singleLine="true"
         android:textSize="17sp"
+        android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"/>
     <TextView
         android:id="@+id/url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/result_name"
+        android:textColor="@color/colorPrimaryDark"
         android:text="URL"
         android:paddingStart="5dp"
         android:paddingEnd= "5dp"
@@ -32,6 +34,7 @@
         android:id="@+id/snip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryDark"
         android:layout_below="@+id/url"
         android:text="Snip"
         android:paddingStart="5dp"
