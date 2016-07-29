@@ -45,13 +45,56 @@ public class TermCounter {
 		return total;
 	}
 
+    /**
+     * Returns the term proportional frequency.
+     *
+     * @return total counts
+     */
     public double getTermFrequency(String term) {
         return get(term)/size();
     }
 
+    /**
+     * Takes a collection of Elements and counts their words.
+     *
+     */
     public void createTFMap() {
         for (String key : keySet()) {
             tfMap.put(key, getTermFrequency(key));
+        }
+    }
+
+    //	/**
+//	 * Takes a collection of Elements and places them in
+//     * the term frequency map.
+//	 *
+//	 * @param root
+//	 */
+//	public void makeTfTree(Elements paragraphs) {
+//		// NOTE: we could use select to find the TextNodes, but since
+//		// we already have a tree iterator, let's use it.
+//        for (Node root : paragraphs) {
+//            for (Node node : new WikiNodeIterable(root)) {
+//                if (node instanceof TextNode) {
+//                    String text = ((TextNode) node).text();
+//
+//                    String[] array = text.replaceAll("\\p{P}", " ").toLowerCase().split("\\s+");
+//                    for (int i = 0; i < array.length; i++) {
+//                        String term = array[i];
+//                        tfMap.put(term, (getTermFrequency(term) + 1) / size());
+//                    }
+//                }
+//            }
+//        }
+//	}
+
+    public void processMap(Elements paragraphs) {
+        for (Node root : paragraphs) {
+            for (Node node: new WikiNodeIterable(root)) {
+                if (node instanceof TextNode) {
+                    processText(((TextNode) node).text());
+                }
+            }
         }
     }
 
@@ -65,21 +108,21 @@ public class TermCounter {
 			processTree(node);
 		}
 	}
-	
-	/**
-	 * Finds TextNodes in a DOM tree and counts their words.
-	 * 
-	 * @param root
-	 */
-	public void processTree(Node root) {
-		// NOTE: we could use select to find the TextNodes, but since
-		// we already have a tree iterator, let's use it.
-		for (Node node: new WikiNodeIterable(root)) {
-			if (node instanceof TextNode) {
-				processText(((TextNode) node).text());
-			}
-		}
-	}
+
+
+
+    /**
+     * Finds TextNodes in a DOM tree and counts their words.
+     *
+     * @param root
+     */
+    public void processTree(Node root) {
+        for (Node node : new WikiNodeIterable(root)) {
+            if (node instanceof TextNode) {
+                processText(((TextNode) node).text());
+            }
+        }
+    }
 
 	/**
 	 * Splits `text` into words and counts them.
