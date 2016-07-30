@@ -39,6 +39,11 @@ public class ResultsDB implements Serializable {
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
+    /**
+     * Generates the path for the term in firebase
+     * @param term
+     * @return
+     */
     public String generateFBKey(String term) {
         String FBKey = "FB:" + term;
         if (FBKey.contains(".")) {
@@ -55,7 +60,12 @@ public class ResultsDB implements Serializable {
         return FBKey;
     }
 
-    public String generateURLKey(String url) {
+    /**
+     * Generates the path for the url for firebase
+     * @param url
+     * @return
+     */
+    public String generateURLPath(String url) {
         try {
             URL realURL = new URL(url);
             String key = realURL.getPath();
@@ -77,16 +87,20 @@ public class ResultsDB implements Serializable {
         return "notUrl";
     }
 
+    /**
+     * Writes the urls in the termcounter as SearchResults
+     * @param tc
+     */
     //TODO need to find a way to do snip of line where term is found
     // TODO rather than use generated keys by me, use .push() to use Firebase keys. This avoids unwanted characters
-    private void writeTerm(TermCounter tc) {
+    private void writeTerm(String title, TermCounter tc) {
         String url = tc.getLabel();
-        String urlKey = generateURLKey(url);
+        String urlKey = generateURLPath(url);
 
         for (String term: tc.keySet()) {
             String FBKey = generateFBKey(term);
             int rel = tc.get(term);
-            SearchResult current = new SearchResult(url, rel);
+            SearchResult current = new SearchResult(title, url, rel);
 
             if (checkExsistence(term)) {
                 Map<String, Object> currentVals = current.toMap();
@@ -99,56 +113,44 @@ public class ResultsDB implements Serializable {
         }
     }
 
-
-    public ArrayList<SearchResult> readResult(String term) {
-        Query results = mDatabase.child(generateFBKey(term));  //.equalTo(generateFBKey(term));
-        DatabaseReference ref = results.getRef();
-        System.out.println("Query null check " + results.toString());
-        final ArrayList<SearchResult> resultList = new ArrayList<>();
-
-        results.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        Map<String, Object> current = (Map<String, Object>) dataSnapshot.getValue();
-                        for (String key: current.keySet()) {
-                            System.out.println("Keys: " + key);
-                        }
-                        Long temp = (Long) current.get("rel");
-                        int rel = temp.intValue();
-                        resultList.add(new SearchResult((String) current.get("url"), rel));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                    }
-                }
-        );
-
-        return resultList;
-    }
-
-    public void indexPage(String url, Elements para) {
+    /**
+     * call to termcounter to do all the counting
+     * @param title
+     * @param url
+     * @param para
+     */
+    public void indexPage(String title, String url, Elements para) {
         TermCounter tc = new TermCounter(url);
         tc.processElements(para);
 
-        writeTerm(tc);
+        writeTerm(title, tc);
     }
 
+    /**
+     * Queues up each url to be indexed and added to the data base
+     * @param urls
+     * @throws IOException
+     */
     public void loadIntoDB(String[] urls) throws IOException {
+        mDatabase.removeValue();
         WikiFetcher wf = new WikiFetcher();
 
         for (String url: urls) {
-            Elements paragraphs = wf.fetchWikipedia(url);
-            indexPage(url, paragraphs);
+            ArrayList<Object> wfReturn = wf.fetchWikipedia(url);
+            String title = (String) wfReturn.get(0);
+            Elements paragraphs = (Elements) wfReturn.get(1);
+            indexPage(title, url, paragraphs);
         }
     }
 
+    /**
+     * Checks if a term is already in the data base
+     * @param term
+     * @return
+     */
     public boolean checkExsistence(String term) {
         String key = generateFBKey(term);
-        Query results = mDatabase.child(key);
+        Query results = mDatabase.child("term").child(key);
         final boolean[] exsists = {false};
         results.addListenerForSingleValueEvent(
                 new ValueEventListener() {

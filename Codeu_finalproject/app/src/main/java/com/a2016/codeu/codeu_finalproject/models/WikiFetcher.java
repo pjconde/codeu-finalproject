@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -25,19 +26,22 @@ public class WikiFetcher {
 	 * @return
 	 * @throws IOException
 	 */
-	public Elements fetchWikipedia(String url) throws IOException {
+	public ArrayList<Object> fetchWikipedia(String url) throws IOException {
+        ArrayList<Object> output = new ArrayList<>();
 		sleepIfNeeded();
 
 		// download and parse the document
 		Connection conn = Jsoup.connect(url);
 		Document doc = conn.get();
+        output.add(0, doc.title());
 
 		// select the content text and pull out the paragraphs.
 		Element content = doc.getElementById("mw-content-text");
 
 		// TODO: avoid selecting paragraphs from sidebars and boxouts
 		Elements paras = content.select("p");
-		return paras;
+        output.add(1, paras);
+		return output;
 	}
 
 	/**
@@ -69,27 +73,6 @@ public class WikiFetcher {
 		Elements paras = content.select("p");
 		return paras;
 	}
-
-    //TODO for this below method to work will need to change name of files in raw
-//    public Elements readWikipedia(String url, InputStream stream) throws IOException {
-//        URL realURL = new URL(url);
-//
-//        // assemble the file name
-//        String slash = File.separator;
-//        String filename =  "resources" + slash + realURL.getHost() + realURL.getPath();
-//        // read the file
-//        Document doc = Jsoup.parse(stream, "UTF-8", filename);
-//
-//
-//        //File filein = new File(filename);
-//        //Document doc = Jsoup.parse(filein, "UTF-8", url);
-//
-//
-//        // TODO: factor out the following repeated code
-//        Element content = doc.getElementById("mw-content-text");
-//        Elements paras = content.select("p");
-//        return paras;
-//    }
 
 	/**
 	 * Rate limits by waiting at least the minimum interval between requests.

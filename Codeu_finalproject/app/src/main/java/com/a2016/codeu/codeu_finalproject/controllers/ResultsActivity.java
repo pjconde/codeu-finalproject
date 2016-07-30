@@ -3,6 +3,7 @@ package com.a2016.codeu.codeu_finalproject.controllers;
 import android.app.DownloadManager;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -34,6 +35,7 @@ public class ResultsActivity extends ListActivity {
     ResultsDB db;
     String searched;
     FirebaseDatabase mDatabase;
+    DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class ResultsActivity extends ListActivity {
         this.mDatabase = FirebaseDatabase.getInstance();
         db = new ResultsDB(mDatabase);
         this.searched = (String) intent.getSerializableExtra("searched");
+        this.ref = mDatabase.getReference();
         //this.results = WikiSearch.search(searched, db);
 
         super.onCreate(savedInstanceState);
@@ -52,36 +55,45 @@ public class ResultsActivity extends ListActivity {
         populate();
     }
 
-    // Populates the list view with the results
+    /**
+     * This method populates the list view of ResultsActivity using FireBaseUI's list adapter
+     * It also does the query to firebase
+     */
     private void populate() {
 
         ListView view = (ListView) findViewById(android.R.id.list);
 
-//        ArrayList<SearchResult> resultList = db.readResult(searched);
-//        Log.v("Populate list size", Integer.toString(resultList.size()));
-
-        DatabaseReference ref = mDatabase.getReference();
-        Query results = ref.child("terms").child(db.generateFBKey(searched)).child("wiki");
-        Log.v("Query", results.toString());
+        // TODO figure out how to sort by rel score descending. Currently orders smallest first
+        Query results = ref.child("terms").child(db.generateFBKey(searched)).child("wiki")
+                .orderByChild("rel");
 
         FirebaseListAdapter<SearchResult> adapter =
                 new FirebaseListAdapter<SearchResult>(this, SearchResult.class,
                         R.layout.result_item, results) {
                     @Override
                     protected void populateView(View v, SearchResult model, int position) {
-                        TextView result = (TextView) v.findViewById(R.id.result_name);
+                        TextView title = (TextView) v.findViewById(R.id.result_name);
                         TextView url = (TextView) v.findViewById(R.id.url);
                         TextView snip = (TextView) v.findViewById(R.id.snip);
 
-                        Log.v("Result URL", model.getUrl());
-                        Log.v("Result snip", String.format("%s", model.getRel()));
-
-                        result.setText("Result: " + "Pending");
-                        url.setText("Url: " + model.getUrl());
-                        snip.setText("Snip: " + model.getRel());
+                        String rurl = model.getUrl();
+                        String rtitle = model.getTitle();
+                        int rel = model.getRel();
+                        // TODO get the snip in some way
+                        title.setText(rtitle);
+                        url.setText(rurl);
+                        snip.setText("Rel: " + rel);
                     }
                 };
         view.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onListItemClick (ListView l, View v, int position, long id) {
+        SearchResult currentResult = (SearchResult) l.getItemAtPosition(position);
+
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentResult.getUrl()));
+        startActivity(browserIntent);
     }
 
 

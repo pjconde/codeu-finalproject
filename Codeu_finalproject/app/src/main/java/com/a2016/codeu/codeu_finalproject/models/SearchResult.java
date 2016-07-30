@@ -10,13 +10,15 @@ import java.util.Map;
 public class SearchResult {
 
     private String url;
+    String title;
     private int rel;
 
     public SearchResult() {
 
     }
 
-    public SearchResult(String url, int rel) {
+    public SearchResult(String title, String url, int rel) {
+        this.title = title;
         this.url = url;
         this.rel = rel;
     }
@@ -37,8 +39,17 @@ public class SearchResult {
         this.rel = rel;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
+        result.put("title", title);
         result.put("url", url);
         result.put("rel", rel);
 
