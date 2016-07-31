@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Populates firebase DB with pages
-        //String[] toBeLoaded = populateLinks();
-        //new RetrieveWiki().execute(toBeLoaded);
+        String[] toBeLoaded = populateLinks();
+        new RetrieveWiki().execute(toBeLoaded);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -89,20 +89,20 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO figure out how to add more links without hardcoding page URL
     private String[] populateLinks() {
-        String[] pages = new String[13];
-        pages[0] = "https://en.wikipedia.org/wiki/Awareness";
-        pages[1] = "https://en.wikipedia.org/wiki/Computer_science";
-        pages[2] = "https://en.wikipedia.org/wiki/Concurrent_computing";
-        pages[3] = "https://en.wikipedia.org/wiki/Consciousness";
-        pages[4] = "https://en.wikipedia.org/wiki/Java_(programming_language)";
-        pages[5] = "https://en.wikipedia.org/wiki/Knowledge";
-        pages[6] = "https://en.wikipedia.org/wiki/Mathematics";
-        pages[7] = "https://en.wikipedia.org/wiki/Modern_philosophy";
-        pages[8] = "https://en.wikipedia.org/wiki/Philosophy";
-        pages[9] = "https://en.wikipedia.org/wiki/Programming_language";
-        pages[10] = "https://en.wikipedia.org/wiki/Property_(philosophy)";
-        pages[11] = "https://en.wikipedia.org/wiki/Quality_(philosophy)";
-        pages[12] = "https://en.wikipedia.org/wiki/Science";
+        String[] pages = new String[4];
+//        pages[0] = "https://en.wikipedia.org/wiki/Awareness";
+        pages[0] = "https://en.wikipedia.org/wiki/Computer_science";
+        pages[1] = "https://en.wikipedia.org/wiki/Concurrent_computing";
+//        pages[3] = "https://en.wikipedia.org/wiki/Consciousness";
+        pages[2] = "https://en.wikipedia.org/wiki/Java_(programming_language)";
+//        pages[5] = "https://en.wikipedia.org/wiki/Knowledge";
+//        pages[6] = "https://en.wikipedia.org/wiki/Mathematics";
+//        pages[7] = "https://en.wikipedia.org/wiki/Modern_philosophy";
+//        pages[8] = "https://en.wikipedia.org/wiki/Philosophy";
+        pages[3] = "https://en.wikipedia.org/wiki/Programming_language";
+//        pages[10] = "https://en.wikipedia.org/wiki/Property_(philosophy)";
+//        pages[11] = "https://en.wikipedia.org/wiki/Quality_(philosophy)";
+//        pages[12] = "https://en.wikipedia.org/wiki/Science";
         return pages;
     }
 
