@@ -99,8 +99,6 @@ public class TermCounter {
 		}
 	}
 
-
-
     /**
      * Finds TextNodes in a DOM tree and counts their words.
      *
