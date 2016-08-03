@@ -36,13 +36,13 @@ public class SearchResultArrayAdapator extends ArrayAdapter<SearchResult> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.result_item, parent, false);
         }
         // Look up text views for data population
-        TextView result = (TextView) convertView.findViewById(R.id.result_name);
+        TextView title = (TextView) convertView.findViewById(R.id.result_name);
         TextView url = (TextView) convertView.findViewById(R.id.url);
         TextView snip = (TextView) convertView.findViewById(R.id.snip);
         // Populate data using SearchResult object
-        result.setText("Result: " + "Pending");
-        url.setText("Url: " + current.getUrl());
-        snip.setText("Snip: " + current.getRel());
+        title.setText(current.getTitle());
+        url.setText(current.getUrl());
+        snip.setText("Rel: " + current.getRel());
         // Return completed view
         return convertView;
     }

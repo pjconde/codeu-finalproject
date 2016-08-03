@@ -94,10 +94,9 @@ public class MainActivity extends AppCompatActivity {
             String[] allWords = searchWord.split("\\s+");
 
             Intent intent = new Intent(this, ResultsActivity.class);
-            intent.putExtra("searched", allWords);
+            intent.putExtra("searched", searchWord);
             startActivity(intent);
         }
-        Log.d("Empty", "box is empty");
     }
 
     // TODO figure out how to add more links without hardcoding page URL

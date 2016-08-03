@@ -34,11 +34,13 @@ public class ResultsDB implements Serializable {
 
     private FirebaseDatabase resultsDB;
     private DatabaseReference mDatabase;
-    Map<String, SearchResult> map = new HashMap<>();
+    private ArrayList<Map<String, SearchResult>> results = new ArrayList<>();
+    private readListener listener;
 
     public ResultsDB(FirebaseDatabase resultsDB) {
         this.resultsDB = resultsDB;
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
+        this.listener = null;
     }
 
     /**
@@ -114,7 +116,7 @@ public class ResultsDB implements Serializable {
         }
     }
 
-    private Map<String, SearchResult> getTermLinks(Query query) {
+    private void getTermLinks(Query query) {
         final Map<String, SearchResult> output = new HashMap<>();
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -128,10 +130,16 @@ public class ResultsDB implements Serializable {
                         int rel = ((Long) link.get("rel")).intValue();
                         SearchResult res = new SearchResult(title, url, rel);
                         output.put(url, res);
-                        map.put(url, res);
+                    }
+                    results.add(output);
+                    Log.d("Results list",results.toString());
+                    if (listener != null) {
+                        listener.onDataLoaded(output);
+                    } else {
+                        Log.d("Listener null", "null");
                     }
                 }
-                Log.d("Link map", output.toString());
+                //results.add(output);
             }
 
             @Override
@@ -140,19 +148,45 @@ public class ResultsDB implements Serializable {
             }
         });
 
-//        while(output.isEmpty() || map.isEmpty()) {
-//            Log.d("Empty", "Map is empty");
-//        }
-        return output;
     }
 
     public void readResults(String[] terms) throws InterruptedException {
         for (String term : terms) {
+            term = term.toLowerCase();
             String key = generateFBKey(term);
             Query query = mDatabase.child("terms").child(key).child("wiki");
-            Map<String, SearchResult> map1 = getTermLinks(query);
-            Log.d("Map", map.toString());
+            getTermLinks(query);
         }
+    }
+
+    public ArrayList<SearchResult> mergeResults(ArrayList<Map<String, SearchResult>> results) {
+        Map<String, SearchResult> fin;
+        if (results.size() == 1) {
+            fin = results.get(0);
+        } else {
+            WikiSearch temp1 = new WikiSearch(results.get(0));
+            WikiSearch temp2 = new WikiSearch(results.get(1));
+            WikiSearch wSearch = temp1.and(temp2);
+            if (wSearch.getMap().isEmpty()) {
+                wSearch = temp1.or(temp2);
+            }
+            for (int x = 2; x < results.size(); x++) {
+                WikiSearch curr = new WikiSearch(results.get(x));
+                wSearch = wSearch.and(curr);
+            }
+            fin = wSearch.getMap();
+        }
+        return sortResults(fin);
+    }
+
+    private ArrayList<SearchResult> sortResults(Map<String, SearchResult> list) {
+        ArrayList<SearchResult> output = new ArrayList<>();
+        WikiSearch temp = new WikiSearch(list);
+        List<Map.Entry<String, SearchResult>> entries = temp.sort();
+        for (Map.Entry<String, SearchResult> entry: entries) {
+			output.add(entry.getValue());
+		}
+        return output;
     }
 
     /**
@@ -210,17 +244,14 @@ public class ResultsDB implements Serializable {
         return exsists[0];
     }
 
-    public Map<String, SearchResult> getMap() {
-        return map;
+    public void setCustomObjectListener(readListener listener) {
+        this.listener = listener;
     }
 
-    public void setMap(Map<String, SearchResult> map) {
-        this.map = map;
-    }
+    public interface readListener {
 
-    private void sleepforMap() {
-        for (int x = 0; x < 5; x++) {
-            Log.d("Wait", "Waiting");
-        }
+        public void onObjectReady(String title);
+
+        public void onDataLoaded(Map<String, SearchResult> data);
     }
 }

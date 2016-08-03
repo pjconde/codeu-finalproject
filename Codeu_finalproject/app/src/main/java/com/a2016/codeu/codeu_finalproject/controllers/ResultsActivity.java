@@ -40,6 +40,8 @@ public class ResultsActivity extends ListActivity {
     private String[] searched;
     private FirebaseDatabase mDatabase;
     private DatabaseReference ref;
+    private int runs;
+    private ArrayList<Map<String, SearchResult>> results = new ArrayList<>();
 
 
 
@@ -49,13 +51,34 @@ public class ResultsActivity extends ListActivity {
         Intent intent = getIntent();
         this.mDatabase = FirebaseDatabase.getInstance();
         db = new ResultsDB(mDatabase);
-        this.searched = (String[]) intent.getSerializableExtra("searched");
+        db.setCustomObjectListener(new ResultsDB.readListener() {
+            @Override
+            public void onObjectReady(String title) {
+                Log.d("Idk", title);
+            }
+
+            @Override
+            public void onDataLoaded(Map<String, SearchResult> data) {
+                Log.d("Listener loaded call",data.toString());
+                results.add(data);
+                runs--;
+                Log.d("Runs", String.format("%d", runs));
+                if (runs == 0) {
+                    // populate stuff
+                    ArrayList<SearchResult> pop = db.mergeResults(results);
+                    populate(pop);
+                }
+            }
+        });
+        String input = (String) intent.getSerializableExtra("searched");
+        this.searched = input.split("\\s+");
+        this.runs = this.searched.length;
         this.ref = mDatabase.getReference();
         //this.results = WikiSearch.search(searched, db);
 
         setContentView(R.layout.activity_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(String.format("Results for %s", searched));
+        toolbar.setTitle(String.format("Results for %s", input));
 
         try {
             db.readResults(searched);
@@ -63,42 +86,42 @@ public class ResultsActivity extends ListActivity {
             e.printStackTrace();
         }
 
-        populate();
     }
 
     /**
      * This method populates the list view of ResultsActivity using FireBaseUI's list adapter
      * It also does the query to firebase
      */
-    private void populate() {
-        ListView view = (ListView) findViewById(android.R.id.list);
-
-
+    private void populate(ArrayList<SearchResult> list) {
+        Log.d("Pop", "Populate called and running");
+        Log.d("Pop List", list.toString());
+        SearchResultArrayAdapator adapter = new SearchResultArrayAdapator(getApplicationContext(), list);
+        setListAdapter(adapter);
         // TODO figure out how to sort by rel score descending. Currently orders smallest first
-        Query results = ref.child("terms").child(db.generateFBKey(searched[0])).child("wiki")
-                .orderByChild("rel");
-        final Map<String, SearchResult> map = new HashMap<>();
-        // TODO due to async nature, calculations should be done in event listeners!!!
-        FirebaseListAdapter<SearchResult> adapter =
-                new FirebaseListAdapter<SearchResult>(this, SearchResult.class,
-                        R.layout.result_item, results) {
-                    @Override
-                    protected void populateView(View v, SearchResult model, int position) {
-                        TextView title = (TextView) v.findViewById(R.id.result_name);
-                        TextView url = (TextView) v.findViewById(R.id.url);
-                        TextView snip = (TextView) v.findViewById(R.id.snip);
-
-                        String rurl = model.getUrl();
-                        String rtitle = model.getTitle();
-                        int rel = model.getRel();
-                        // TODO get the snip in some way
-                        title.setText(rtitle);
-                        url.setText(rurl);
-                        snip.setText("Rel: " + rel);
-                        map.put(rurl, model);
-                    }
-                };
-        view.setAdapter(adapter);
+//        Query results = ref.child("terms").child(db.generateFBKey(searched[0])).child("wiki")
+//                .orderByChild("rel");
+//        final Map<String, SearchResult> map = new HashMap<>();
+//        // TODO due to async nature, calculations should be done in event listeners!!!
+//        FirebaseListAdapter<SearchResult> adapter =
+//                new FirebaseListAdapter<SearchResult>(this, SearchResult.class,
+//                        R.layout.result_item, results) {
+//                    @Override
+//                    protected void populateView(View v, SearchResult model, int position) {
+//                        TextView title = (TextView) v.findViewById(R.id.result_name);
+//                        TextView url = (TextView) v.findViewById(R.id.url);
+//                        TextView snip = (TextView) v.findViewById(R.id.snip);
+//
+//                        String rurl = model.getUrl();
+//                        String rtitle = model.getTitle();
+//                        int rel = model.getRel();
+//                        // TODO get the snip in some way
+//                        title.setText(rtitle);
+//                        url.setText(rurl);
+//                        snip.setText("Rel: " + rel);
+//                        map.put(rurl, model);
+//                    }
+//                };
+//        view.setAdapter(adapter);
     }
 
     @Override
@@ -108,6 +131,5 @@ public class ResultsActivity extends ListActivity {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentResult.getUrl()));
         startActivity(browserIntent);
     }
-
 
 }

@@ -22,16 +22,14 @@ import redis.clients.jedis.Jedis;
 public class WikiSearch implements Serializable {
 	
 	// map from URLs that contain the term(s) to relevance score
-	private Map<String, Integer> map;
-    private Query q;
-
+	private Map<String, SearchResult> map;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param map
 	 */
-	public WikiSearch(Map<String, Integer> map) {
+	public WikiSearch(Map<String, SearchResult> map) {
 		this.map = map;
 	}
 
@@ -42,20 +40,8 @@ public class WikiSearch implements Serializable {
 	 * @return
 	 */
 	public Integer getRelevance(String url) {
-		Integer relevance = map.get(url);
+		Integer relevance = map.get(url).getRel();
 		return relevance==null ? 0: relevance;
-	}
-	
-	/**
-	 * Prints the contents in order of term frequency.
-	 * 
-	 * @param
-	 */
-	private  void print() {
-		List<Entry<String, Integer>> entries = sort();
-		for (Entry<String, Integer> entry: entries) {
-			System.out.println(entry);
-		}
 	}
 	
 	/**
@@ -66,10 +52,12 @@ public class WikiSearch implements Serializable {
 	 */
 	public WikiSearch or(WikiSearch that) {
         // FILL THIS IN!
-        Map<String, Integer> outputMap = new HashMap<String, Integer>(map);
+        Map<String, SearchResult> outputMap = new HashMap<>(map);
         for (String key : that.map.keySet()) {
-        	int rel = totalRelevance(this.getRelevance(key), that.getRelevance(key));
-        	outputMap.put(key, rel);
+            SearchResult temp = that.map.get(key);
+//        	int rel = totalRelevance(this.getRelevance(key), that.getRelevance(key));
+//            temp.setRel(rel);
+        	outputMap.put(key, temp);
         }
         WikiSearch output = new WikiSearch(outputMap);
 		return output;
@@ -83,11 +71,13 @@ public class WikiSearch implements Serializable {
 	 */
 	public WikiSearch and(WikiSearch that) {
         // FILL THIS IN!
-        Map<String, Integer> outputMap = new HashMap<String, Integer>();
+        Map<String, SearchResult> outputMap = new HashMap<>();
         for(String key : this.map.keySet()) {
         	if (that.map.containsKey(key) && key != null) {
+				SearchResult temp = this.map.get(key);
 	        	int rel = totalRelevance(this.getRelevance(key), that.getRelevance(key));
-	        	outputMap.put(key, rel);	
+                temp.setRel(rel);
+	        	outputMap.put(key, temp);
         	}
         }
         WikiSearch output = new WikiSearch(outputMap);
@@ -102,7 +92,7 @@ public class WikiSearch implements Serializable {
 	 */
 	public WikiSearch minus(WikiSearch that) {
         // FILL THIS IN!
-        Map<String, Integer> outputMap = new HashMap<String, Integer>(map);
+        Map<String, SearchResult> outputMap = new HashMap<>(map);
         for(String key : this.map.keySet()) {
 	    	if (that.map.containsKey(key)) {
 	        	outputMap.remove(key);	
@@ -129,37 +119,31 @@ public class WikiSearch implements Serializable {
 	 * 
 	 * @return List of entries with URL and relevance.
 	 */
-	public List<Entry<String, Integer>> sort() {
+	public List<Entry<String, SearchResult>> sort() {
         // FILL THIS IN!
-        List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(map.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-            public int compare( Map.Entry<String, Integer> v1, Map.Entry<String, Integer> v2)
+        List<Map.Entry<String, SearchResult>> list = new LinkedList<>(map.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<String, SearchResult>>() {
+            public int compare( Map.Entry<String, SearchResult> v1, Map.Entry<String, SearchResult> v2)
             {
-                return (v1.getValue()).compareTo(v2.getValue());
+                int val1 = v1.getValue().getRel();
+                int val2 = v2.getValue().getRel();
+                if (val1 > val2) {
+                    return -1;
+                } else if (val1 < val2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             }
         });
 		return list;
 	}
 
-	/**
-	 * Performs a search and makes a WikiSearch object.
-	 * 
-	 * @param term
-	 * @return
-	 */
-//	public static Query search(String term, ResultsDB db) {
-//        System.out.println("JedisIndex Term: " + term);
-//
-//        //Map<String, Integer> map = index.getCounts(term);
-//
-//		return temp;
-//	}
-
-    public Map<String, Integer> getMap() {
+    public Map<String, SearchResult> getMap() {
         return map;
     }
 
-    public void setMap(Map<String, Integer> map) {
+    public void setMap(Map<String, SearchResult> map) {
         this.map = map;
     }
 
