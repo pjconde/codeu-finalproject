@@ -1,5 +1,7 @@
 package com.a2016.codeu.codeu_finalproject.controllers;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.DownloadManager;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -28,14 +30,18 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadFactory;
 
 public class ResultsActivity extends ListActivity {
 
-    ResultsDB db;
-    String searched;
-    FirebaseDatabase mDatabase;
-    DatabaseReference ref;
+    private ResultsDB db;
+    private String[] searched;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference ref;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +49,19 @@ public class ResultsActivity extends ListActivity {
         Intent intent = getIntent();
         this.mDatabase = FirebaseDatabase.getInstance();
         db = new ResultsDB(mDatabase);
-        this.searched = (String) intent.getSerializableExtra("searched");
+        this.searched = (String[]) intent.getSerializableExtra("searched");
         this.ref = mDatabase.getReference();
         //this.results = WikiSearch.search(searched, db);
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(String.format("Results for %s", searched));
+
+        try {
+            db.readResults(searched);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         populate();
     }
@@ -60,13 +71,14 @@ public class ResultsActivity extends ListActivity {
      * It also does the query to firebase
      */
     private void populate() {
-
         ListView view = (ListView) findViewById(android.R.id.list);
 
-        // TODO figure out how to sort by rel score descending. Currently orders smallest first
-        Query results = ref.child("terms").child(db.generateFBKey(searched)).child("wiki")
-                .orderByChild("rel");
 
+        // TODO figure out how to sort by rel score descending. Currently orders smallest first
+        Query results = ref.child("terms").child(db.generateFBKey(searched[0])).child("wiki")
+                .orderByChild("rel");
+        final Map<String, SearchResult> map = new HashMap<>();
+        // TODO due to async nature, calculations should be done in event listeners!!!
         FirebaseListAdapter<SearchResult> adapter =
                 new FirebaseListAdapter<SearchResult>(this, SearchResult.class,
                         R.layout.result_item, results) {
@@ -83,6 +95,7 @@ public class ResultsActivity extends ListActivity {
                         title.setText(rtitle);
                         url.setText(rurl);
                         snip.setText("Rel: " + rel);
+                        map.put(rurl, model);
                     }
                 };
         view.setAdapter(adapter);

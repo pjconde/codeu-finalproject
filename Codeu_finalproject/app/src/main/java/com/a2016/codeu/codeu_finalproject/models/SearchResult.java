@@ -56,4 +56,9 @@ public class SearchResult {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s with rel of %d", url, rel);
+    }
+
 }

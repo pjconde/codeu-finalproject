@@ -1,5 +1,6 @@
 package com.a2016.codeu.codeu_finalproject.models;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -33,6 +34,7 @@ public class ResultsDB implements Serializable {
 
     private FirebaseDatabase resultsDB;
     private DatabaseReference mDatabase;
+    Map<String, SearchResult> map = new HashMap<>();
 
     public ResultsDB(FirebaseDatabase resultsDB) {
         this.resultsDB = resultsDB;
@@ -92,7 +94,6 @@ public class ResultsDB implements Serializable {
      * @param tc
      */
     //TODO need to find a way to do snip of line where term is found
-    // TODO rather than use generated keys by me, use .push() to use Firebase keys. This avoids unwanted characters
     private void writeTerm(String title, TermCounter tc) {
         String url = tc.getLabel();
         String urlKey = generateURLPath(url);
@@ -110,6 +111,47 @@ public class ResultsDB implements Serializable {
             } else {
                 mDatabase.child("terms").child(FBKey).child(urlKey).setValue(current);
             }
+        }
+    }
+
+    private Map<String, SearchResult> getTermLinks(Query query) {
+        final Map<String, SearchResult> output = new HashMap<>();
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Map<String, Object> ds = (Map<String, Object>) dataSnapshot.getValue();
+                    for (String key : ds.keySet()) {
+                        Map<String, Object> link = (Map<String, Object>) ds.get(key);
+                        String url = (String) link.get("url");
+                        String title = (String) link.get("title");
+                        int rel = ((Long) link.get("rel")).intValue();
+                        SearchResult res = new SearchResult(title, url, rel);
+                        output.put(url, res);
+                        map.put(url, res);
+                    }
+                }
+                Log.d("Link map", output.toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
+
+//        while(output.isEmpty() || map.isEmpty()) {
+//            Log.d("Empty", "Map is empty");
+//        }
+        return output;
+    }
+
+    public void readResults(String[] terms) throws InterruptedException {
+        for (String term : terms) {
+            String key = generateFBKey(term);
+            Query query = mDatabase.child("terms").child(key).child("wiki");
+            Map<String, SearchResult> map1 = getTermLinks(query);
+            Log.d("Map", map.toString());
         }
     }
 
@@ -152,7 +194,7 @@ public class ResultsDB implements Serializable {
         String key = generateFBKey(term);
         Query results = mDatabase.child("term").child(key);
         final boolean[] exsists = {false};
-        results.addListenerForSingleValueEvent(
+        results.addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -166,5 +208,19 @@ public class ResultsDB implements Serializable {
                 }
         );
         return exsists[0];
+    }
+
+    public Map<String, SearchResult> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, SearchResult> map) {
+        this.map = map;
+    }
+
+    private void sleepforMap() {
+        for (int x = 0; x < 5; x++) {
+            Log.d("Wait", "Waiting");
+        }
     }
 }

@@ -10,9 +10,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.Button;
@@ -45,23 +44,21 @@ import redis.clients.jedis.Jedis;
 public class MainActivity extends AppCompatActivity implements ISpeechRecognitionServerEvents {
 
     private ResultsDB db;
-    private Button _micButton;
+    private FloatingActionButton _micButton;
     private MicrophoneRecognitionClient micClient = null;
     private FinalResponseStatus finalResponseStatus = FinalResponseStatus.NotReceived;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         // Populates firebase DB with pages
-        // String[] toBeLoaded = populateLinks();
-        // new RetrieveWiki().execute(toBeLoaded);
+//        String[] toBeLoaded = populateLinks();
+//        new RetrieveWiki().execute(toBeLoaded);
 
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        this._micButton = (Button) findViewById(R.id.microphone);
+        this._micButton = (FloatingActionButton) findViewById(R.id.microphone);
 
         this._micButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -131,39 +128,15 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
         boolean searchEmpty = TextUtils.isEmpty(searchBox.getText().toString());
         if (!searchEmpty) {
             // If the search box is not empty we retrieve the string
-            String searchWord = searchBox.getText().toString();
-//            Query search = WikiSearch.search(searchWord, db);
-//            WikiSearch queryPass = new WikiSearch(search);
+            String searchWord = searchBox.getText().toString().trim();
 
-//            System.out.println(search.toString());
+            String[] allWords = searchWord.split("\\s+");
 
             Intent intent = new Intent(this, ResultsActivity.class);
-            intent.putExtra("searched", searchWord);
+            intent.putExtra("searched", allWords);
             startActivity(intent);
         }
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        Log.d("Empty", "box is empty");
     }
 
     // TODO figure out how to add more links without hardcoding page URL
