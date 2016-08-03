@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.renderscript.ScriptGroup;
+import android.speech.RecognizerIntent;
 import android.support.constraint.solver.widgets.Snapshot;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,17 +16,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.Button;
-
-import com.microsoft.bing.speech.SpeechClientStatus;
-import com.microsoft.projectoxford.speechrecognition.DataRecognitionClient;
-import com.microsoft.projectoxford.speechrecognition.ISpeechRecognitionServerEvents;
-import com.microsoft.projectoxford.speechrecognition.MicrophoneRecognitionClient;
-import com.microsoft.projectoxford.speechrecognition.RecognitionResult;
-import com.microsoft.projectoxford.speechrecognition.RecognitionStatus;
-import com.microsoft.projectoxford.speechrecognition.SpeechRecognitionMode;
-import com.microsoft.projectoxford.speechrecognition.SpeechRecognitionServiceFactory;
-import com.microsoft.projectoxford.speechrecognition.ISpeechRecognitionServerEvents;
-import java.util.concurrent.TimeUnit;
 
 import com.a2016.codeu.codeu_finalproject.R;
 import com.a2016.codeu.codeu_finalproject.models.ResultsDB;
@@ -41,12 +31,11 @@ import java.util.Map;
 
 import redis.clients.jedis.Jedis;
 
-public class MainActivity extends AppCompatActivity implements ISpeechRecognitionServerEvents {
+public class MainActivity extends AppCompatActivity {
 
     private ResultsDB db;
     private FloatingActionButton _micButton;
-    private MicrophoneRecognitionClient micClient = null;
-    private FinalResponseStatus finalResponseStatus = FinalResponseStatus.NotReceived;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,59 +55,31 @@ public class MainActivity extends AppCompatActivity implements ISpeechRecognitio
                 micOnClick(v);
             }
         });
-
-
+        
     }
-
-    public enum FinalResponseStatus {
-        NotReceived,
-        OK,
-        Timeout
-    }
-
 
     public void micOnClick(View view) {
-        String language = "en-us";
-        String primaryKey = this.getString(R.string.primaryKey);
-        String secondaryKey = this.getString(R.string.secondaryKey);
-        SpeechRecognitionMode mode = SpeechRecognitionMode.ShortPhrase;
-        if (this.micClient == null) {
-            // line of code that crashes the app (API is not consistent)
-            this.micClient = SpeechRecognitionServiceFactory.createMicrophoneClient(this, mode, language, this, primaryKey, secondaryKey);
-        }
-        this.micClient.startMicAndRecognition();
-
-
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
+        startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
     }
 
     @Override
-    public void onPartialResponseReceived(String s) {
-        EditText searchBox = (EditText) findViewById(R.id.search_input);
-        searchBox.setText(s);
-    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    @Override
-    public void onIntentReceived(String s) {
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
 
-    }
-
-    @Override
-    public void onError(int i, String s) {
-        System.out.println("Error");
-    }
-
-    @Override
-    public void onAudioEvent(boolean recording) {
-        if (!recording) {
-            this.micClient.endMicAndRecognition();
-            //this._startButton.setEnabled(true);
-        }
-    }
-
-    @Override
-    public void onFinalResponseReceived(RecognitionResult recognitionResult) {
-        if (this.micClient != null) {
-            this.micClient.endMicAndRecognition();
+                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    EditText searchBox = (EditText) findViewById(R.id.search_input);
+                    searchBox.setText(result.get(0));
+                }
+                break;
+            }
         }
     }
 
