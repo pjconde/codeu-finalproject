@@ -14,8 +14,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.ArrayAdapter;
+import android.view.Menu;
+import android.widget.Toast;
+import android.content.ActivityNotFoundException;
 
 import com.a2016.codeu.codeu_finalproject.R;
 import com.a2016.codeu.codeu_finalproject.models.ResultsDB;
@@ -35,7 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
     private ResultsDB db;
     private FloatingActionButton _micButton;
+    private AutoCompleteTextView searchBox;
     private final int REQ_CODE_SPEECH_INPUT = 100;
+    String[] list = {"java", "programming", "proactive",
+            "android", "and"}; // list of auto suggestions
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +55,27 @@ public class MainActivity extends AppCompatActivity {
 //        String[] toBeLoaded = populateLinks();
 //        new RetrieveWiki().execute(toBeLoaded);
 
-        this._micButton = (FloatingActionButton) findViewById(R.id.microphone);
+        setUpAutoSuggestion();
+        setUpSpeech();
+        
+    }
 
+    protected void setUpAutoSuggestion() {
+        searchBox = (AutoCompleteTextView) findViewById(R.id.search_input);
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
+        searchBox.setThreshold(1);
+        searchBox.setDropDownWidth(500);
+        searchBox.setAdapter(adapter);
+    }
+
+    protected void setUpSpeech() {
+        this._micButton = (FloatingActionButton) findViewById(R.id.microphone);
         this._micButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 micOnClick(v);
             }
         });
-        
     }
 
     public void micOnClick(View view) {
@@ -63,7 +83,13 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
-        startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "Speech recognition is not supported in this device.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -75,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && null != data) {
 
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    EditText searchBox = (EditText) findViewById(R.id.search_input);
                     searchBox.setText(result.get(0));
                 }
                 break;
@@ -85,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick(View v) throws IOException {
         // This gets the search box and allows us to check if it is empty
-        EditText searchBox = (EditText) findViewById(R.id.search_input);
+        //EditText searchBox = (EditText) findViewById(R.id.search_input);
         boolean searchEmpty = TextUtils.isEmpty(searchBox.getText().toString());
         if (!searchEmpty) {
             // If the search box is not empty we retrieve the string
@@ -97,6 +122,13 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("searched", searchWord);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     // TODO figure out how to add more links without hardcoding page URL
