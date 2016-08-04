@@ -39,9 +39,9 @@ public class WikiSearch implements Serializable {
 	 * @param url
 	 * @return
 	 */
-	public Integer getRelevance(String url) {
-		Integer relevance = map.get(url).getRel();
-		return relevance==null ? 0: relevance;
+	public double getRelevance(String url) {
+		double relevance = map.get(url).getRel();
+		return relevance;
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class WikiSearch implements Serializable {
         for(String key : this.map.keySet()) {
         	if (that.map.containsKey(key) && key != null) {
 				SearchResult temp = this.map.get(key);
-	        	int rel = totalRelevance(this.getRelevance(key), that.getRelevance(key));
+	        	double rel = totalRelevance(this.getRelevance(key), that.getRelevance(key));
                 temp.setRel(rel);
 	        	outputMap.put(key, temp);
         	}
@@ -109,7 +109,7 @@ public class WikiSearch implements Serializable {
 	 * @param rel2: relevance score for the second search
 	 * @return
 	 */
-	protected int totalRelevance(Integer rel1, Integer rel2) {
+	protected double totalRelevance(double rel1, double rel2) {
 		// simple starting place: relevance is the sum of the term frequencies.
 		return rel1 + rel2;
 	}
@@ -125,8 +125,8 @@ public class WikiSearch implements Serializable {
         Collections.sort(list, new Comparator<Map.Entry<String, SearchResult>>() {
             public int compare( Map.Entry<String, SearchResult> v1, Map.Entry<String, SearchResult> v2)
             {
-                int val1 = v1.getValue().getRel();
-                int val2 = v2.getValue().getRel();
+                double val1 = v1.getValue().getRel();
+                double val2 = v2.getValue().getRel();
                 if (val1 > val2) {
                     return -1;
                 } else if (val1 < val2) {

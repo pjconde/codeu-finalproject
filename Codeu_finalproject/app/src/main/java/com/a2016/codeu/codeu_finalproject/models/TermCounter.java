@@ -1,5 +1,7 @@
 package com.a2016.codeu.codeu_finalproject.models;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +53,9 @@ public class TermCounter {
      * @return total counts
      */
     public double getTermFrequency(String term) {
-        return get(term)/size();
+        double temp = get(term)/((double) size());
+        Log.d("Frequency", String.format("%s", temp));
+        return temp;
     }
 
     /**
@@ -155,12 +159,21 @@ public class TermCounter {
 	 * @param term
 	 * @return the count associated with this term
 	 */
-	public Integer get(String term) {
+	public int get(String term) {
 		Integer count = map.get(term);
 		return count == null ? 0 : count;
 	}
 
-	/**
+	public double getTF(String term) {
+        double count = tfMap.get(term);
+        return count;
+    }
+
+    public Map<String, Double> getTfMap() {
+        return tfMap;
+    }
+
+    /**
 	 * Returns the set of terms that have been counted.
 	 * 
 	 * @return
@@ -172,13 +185,13 @@ public class TermCounter {
 	/**
 	 * Print the terms and their counts in arbitrary order.
 	 */
-	public void printCounts() {
-		for (String key: keySet()) {
-			Integer count = get(key);
-			System.out.println(key + ", " + count);
-		}
-		System.out.println("Total of all counts = " + size());
-	}
+//	public void printCounts() {
+//		for (String key: keySet()) {
+//			Integer count = get(key);
+//			System.out.println(key + ", " + count);
+//		}
+//		System.out.println("Total of all counts = " + size());
+//	}
 
 	/**
 	 * @param args

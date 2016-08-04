@@ -11,13 +11,13 @@ public class SearchResult {
 
     private String url;
     String title;
-    private int rel;
+    private double rel;
 
     public SearchResult() {
 
     }
 
-    public SearchResult(String title, String url, int rel) {
+    public SearchResult(String title, String url, double rel) {
         this.title = title;
         this.url = url;
         this.rel = rel;
@@ -31,11 +31,11 @@ public class SearchResult {
         this.url = url;
     }
 
-    public int getRel() {
+    public double getRel() {
         return rel;
     }
 
-    public void setRel(int rel) {
+    public void setRel(double rel) {
         this.rel = rel;
     }
 
@@ -58,7 +58,7 @@ public class SearchResult {
 
     @Override
     public String toString() {
-        return String.format("%s with rel of %d", url, rel);
+        return String.format("%s with rel of %s", url, rel);
     }
 
 }

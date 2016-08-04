@@ -99,10 +99,11 @@ public class ResultsDB implements Serializable {
     private void writeTerm(String title, TermCounter tc) {
         String url = tc.getLabel();
         String urlKey = generateURLPath(url);
+        Log.d("TC TFMap", tc.getTfMap().toString());
 
         for (String term: tc.keySet()) {
             String FBKey = generateFBKey(term);
-            int rel = tc.get(term);
+            double rel = tc.getTF(term);
             SearchResult current = new SearchResult(title, url, rel);
 
             if (checkExsistence(term)) {
@@ -127,7 +128,7 @@ public class ResultsDB implements Serializable {
                         Map<String, Object> link = (Map<String, Object>) ds.get(key);
                         String url = (String) link.get("url");
                         String title = (String) link.get("title");
-                        int rel = ((Long) link.get("rel")).intValue();
+                        double rel = (double) link.get("rel");
                         SearchResult res = new SearchResult(title, url, rel);
                         output.put(url, res);
                     }
@@ -198,7 +199,8 @@ public class ResultsDB implements Serializable {
     public void indexPage(String title, String url, Elements para) {
         TermCounter tc = new TermCounter(url);
         tc.processElements(para);
-
+        tc.createTFMap();
+        Log.d("TFMap Index", tc.getTfMap().toString());
         writeTerm(title, tc);
     }
 
@@ -208,7 +210,6 @@ public class ResultsDB implements Serializable {
      * @throws IOException
      */
     public void loadIntoDB(String[] urls) throws IOException {
-        mDatabase.removeValue();
         WikiFetcher wf = new WikiFetcher();
 
         for (String url: urls) {
