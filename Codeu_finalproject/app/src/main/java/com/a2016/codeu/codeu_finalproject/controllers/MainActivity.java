@@ -12,13 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.ArrayAdapter;
 import android.view.Menu;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.ActivityNotFoundException;
 
@@ -35,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
 
     private ResultsDB db;
     private FloatingActionButton _micButton;
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         searchBox.setThreshold(1);
         searchBox.setDropDownWidth(500);
         searchBox.setAdapter(adapter);
+        searchBox.setOnEditorActionListener(this);
     }
 
     protected void setUpSpeech() {
@@ -110,6 +114,10 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View v) throws IOException {
         // This gets the search box and allows us to check if it is empty
         //EditText searchBox = (EditText) findViewById(R.id.search_input);
+        performSearch();
+    }
+
+    private void performSearch (){
         boolean searchEmpty = TextUtils.isEmpty(searchBox.getText().toString());
         if (!searchEmpty) {
             // If the search box is not empty we retrieve the string
@@ -149,4 +157,13 @@ public class MainActivity extends AppCompatActivity {
         return pages;
     }
 
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        boolean handled = false;
+        if (actionId == EditorInfo.IME_ACTION_SEND) {
+            performSearch();
+            handled = true;
+        }
+        return handled;
+    }
 }

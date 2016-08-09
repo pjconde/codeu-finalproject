@@ -59,6 +59,9 @@
         app:layout_constraintLeft_toLeftOf="@+id/content_main"
         app:layout_constraintTop_toBottomOf="@+id/imageView2"
         android:layout_marginTop="16dp"
-        app:layout_constraintRight_toLeftOf="@+id/microphone" />
+        app:layout_constraintRight_toLeftOf="@+id/microphone"
+        android:inputType="text"
+        android:maxLines="1"
+        android:imeOptions="actionSend" />
 
 </android.support.constraint.ConstraintLayout>
