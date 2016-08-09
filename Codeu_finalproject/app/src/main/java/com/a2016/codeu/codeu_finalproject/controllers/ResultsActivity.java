@@ -59,15 +59,27 @@ public class ResultsActivity extends ListActivity {
 
             @Override
             public void onDataLoaded(Map<String, SearchResult> data) {
-                Log.d("Listener loaded call",data.toString());
                 results.add(data);
                 runs--;
-                Log.d("Runs", String.format("%d", runs));
                 if (runs == 0) {
                     // populate stuff
                     ArrayList<SearchResult> pop = db.mergeResults(results);
                     populate(pop);
                 }
+            }
+
+            @Override
+            public void noResults() {
+                Snackbar noResults = Snackbar.make(findViewById(android.R.id.list), "No results found",
+                        Snackbar.LENGTH_INDEFINITE);
+                View.OnClickListener sOnClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                };
+
+                noResults.setAction("Back", sOnClickListener).show();
             }
         });
         String input = (String) intent.getSerializableExtra("searched");

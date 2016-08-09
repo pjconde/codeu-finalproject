@@ -133,11 +133,14 @@ public class ResultsDB implements Serializable {
                         output.put(url, res);
                     }
                     results.add(output);
-                    Log.d("Results list",results.toString());
                     if (listener != null) {
                         listener.onDataLoaded(output);
                     } else {
                         Log.d("Listener null", "null");
+                    }
+                } else {
+                    if (listener != null) {
+                        listener.noResults();
                     }
                 }
                 //results.add(output);
@@ -169,7 +172,9 @@ public class ResultsDB implements Serializable {
             WikiSearch temp2 = new WikiSearch(results.get(1));
             WikiSearch wSearch = temp1.and(temp2);
             if (wSearch.getMap().isEmpty()) {
-                wSearch = temp1.or(temp2);
+                if (listener != null) {
+                    listener.noResults();
+                }
             }
             for (int x = 2; x < results.size(); x++) {
                 WikiSearch curr = new WikiSearch(results.get(x));
@@ -254,5 +259,7 @@ public class ResultsDB implements Serializable {
         public void onObjectReady(String title);
 
         public void onDataLoaded(Map<String, SearchResult> data);
+
+        public void noResults();
     }
 }
