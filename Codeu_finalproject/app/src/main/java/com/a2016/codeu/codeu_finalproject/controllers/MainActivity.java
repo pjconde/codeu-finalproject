@@ -68,7 +68,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
             "code", "difference", "incredible", "academy", "academia", "teach", "learn", "courses",
             "time", "hour", "shops", "building", "apartment", "complex", "mountain", "hiking",
             "places", "letter", "message", "continent", "ocean", "sea", "calamity", "competition",
-            "architecture", "art", "museum", "street", "walk", "creation", "email", "taste", "touch"};
+            "architecture", "art", "museum", "street", "walk", "creation", "email", "taste", "touch",
+            "jeb", "bush", "bacon", "bernie", "sanders", "clinton", "zika"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
