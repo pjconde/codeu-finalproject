@@ -39,7 +39,7 @@ public class ResultsDB implements Serializable {
 
     public ResultsDB(FirebaseDatabase resultsDB) {
         this.resultsDB = resultsDB;
-        this.mDatabase = FirebaseDatabase.getInstance().getReference();
+        this.mDatabase = resultsDB.getReference();
         this.listener = null;
     }
 
@@ -96,15 +96,14 @@ public class ResultsDB implements Serializable {
      * @param tc
      */
     //TODO need to find a way to do snip of line where term is found
-    private void writeTerm(String title, TermCounter tc) {
+    private void writeTerm(String title, String image, TermCounter tc) {
         String url = tc.getLabel();
         String urlKey = generateURLPath(url);
-        Log.d("TC TFMap", tc.getTfMap().toString());
 
         for (String term: tc.keySet()) {
             String FBKey = generateFBKey(term);
             double rel = tc.getTF(term);
-            SearchResult current = new SearchResult(title, url, rel);
+            SearchResult current = new SearchResult(title, url, image, rel);
 
             if (checkExsistence(term)) {
                 Map<String, Object> currentVals = current.toMap();
@@ -129,7 +128,8 @@ public class ResultsDB implements Serializable {
                         String url = (String) link.get("url");
                         String title = (String) link.get("title");
                         double rel = (double) link.get("rel");
-                        SearchResult res = new SearchResult(title, url, rel);
+                        String image = (String) link.get("image");
+                        SearchResult res = new SearchResult(title, url, image, rel);
                         output.put(url, res);
                     }
                     results.add(output);
@@ -201,12 +201,11 @@ public class ResultsDB implements Serializable {
      * @param url
      * @param para
      */
-    public void indexPage(String title, String url, Elements para) {
+    public void indexPage(String title, String url, String image, Elements para) {
         TermCounter tc = new TermCounter(url);
         tc.processElements(para);
         tc.createTFMap();
-        Log.d("TFMap Index", tc.getTfMap().toString());
-        writeTerm(title, tc);
+        writeTerm(title, image, tc);
     }
 
     /**
@@ -220,8 +219,9 @@ public class ResultsDB implements Serializable {
         for (String url: urls) {
             ArrayList<Object> wfReturn = wf.fetchWikipedia(url);
             String title = (String) wfReturn.get(0);
+            String image = (String) wfReturn.get(3);
             Elements paragraphs = (Elements) wfReturn.get(1);
-            indexPage(title, url, paragraphs);
+            indexPage(title, url, image, paragraphs);
         }
     }
 
@@ -255,8 +255,6 @@ public class ResultsDB implements Serializable {
     }
 
     public interface readListener {
-
-        public void onObjectReady(String title);
 
         public void onDataLoaded(Map<String, SearchResult> data);
 

@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("404 Search");
 
         // Populates firebase DB with pages
 //        String[] toBeLoaded = populateLinks();
@@ -113,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
     public void onClick(View v) throws IOException {
         // This gets the search box and allows us to check if it is empty
-        //EditText searchBox = (EditText) findViewById(R.id.search_input);
+        // EditText searchBox = (EditText) findViewById(R.id.search_input);
         performSearch();
     }
 
@@ -160,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         boolean handled = false;
-        if (actionId == EditorInfo.IME_ACTION_SEND) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
             performSearch();
             handled = true;
         }

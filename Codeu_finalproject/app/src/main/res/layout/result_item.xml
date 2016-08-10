@@ -3,10 +3,23 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="54dp"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="1pt"
+        android:paddingBottom="1pt"
+        android:paddingLeft="1pt"
+        android:paddingRight="1pt"
+        android:singleLine="true"/>
     <TextView
         android:id="@+id/result_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/image"
+        android:layout_toRightOf="@+id/image"
         android:text="Result"
         android:paddingTop="5dp"
         android:paddingStart= "5dp"
@@ -22,6 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/result_name"
+        android:layout_toEndOf="@+id/image"
+        android:layout_toRightOf="@+id/image"
         android:textColor="@color/colorPrimaryDark"
         android:text="URL"
         android:paddingStart="5dp"
@@ -30,18 +45,20 @@
         android:paddingLeft="5dp"
         android:paddingBottom="5dp"
         android:textSize="15sp"/>
-    <TextView
-        android:id="@+id/snip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryDark"
-        android:layout_below="@+id/url"
-        android:text="Snip"
-        android:paddingStart="5dp"
-        android:paddingEnd= "5dp"
-        android:paddingRight="5dp"
-        android:paddingLeft="5dp"
-        android:paddingBottom="5dp"
-        android:textSize="15sp"/>
+    <!--<TextView-->
+        <!--android:id="@+id/snip"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_toEndOf="@+id/poster"-->
+        <!--android:layout_toRightOf="@+id/poster"-->
+        <!--android:textColor="@color/colorPrimaryDark"-->
+        <!--android:layout_below="@+id/url"-->
+        <!--android:text="Snip"-->
+        <!--android:paddingStart="5dp"-->
+        <!--android:paddingEnd= "5dp"-->
+        <!--android:paddingRight="5dp"-->
+        <!--android:paddingLeft="5dp"-->
+        <!--android:paddingBottom="5dp"-->
+        <!--android:textSize="15sp"/>-->
 
 </RelativeLayout>

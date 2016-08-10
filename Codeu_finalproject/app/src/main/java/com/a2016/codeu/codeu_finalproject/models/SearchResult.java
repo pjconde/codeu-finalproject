@@ -1,5 +1,13 @@
 package com.a2016.codeu.codeu_finalproject.models;
 
+import android.graphics.BitmapFactory;
+import android.widget.ImageView;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,16 +18,27 @@ import java.util.Map;
 public class SearchResult {
 
     private String url;
-    String title;
+    private String title;
+    private String image;
+    private String description;
     private double rel;
 
     public SearchResult() {
 
     }
 
-    public SearchResult(String title, String url, double rel) {
+    public SearchResult(String title, String url, String image, double rel) {
         this.title = title;
         this.url = url;
+        this.rel = rel;
+        this.image = image;
+    }
+
+    public SearchResult(String title, String url, String image, String description, double rel) {
+        this.title = title;
+        this.url = url;
+        this.image = image;
+        this.description = description;
         this.rel = rel;
     }
 
@@ -47,13 +66,49 @@ public class SearchResult {
         this.title = title;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("title", title);
         result.put("url", url);
         result.put("rel", rel);
-
+        result.put("image", image);
+        result.put("description", description);
         return result;
+    }
+
+    public boolean loadImage(String url, ImageView view) {
+        try {
+            URL imageURL = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) imageURL.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+
+            InputStream stream = connection.getInputStream();
+            view.setImageBitmap(BitmapFactory.decodeStream(stream));
+
+            return true;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

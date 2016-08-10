@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.a2016.codeu.codeu_finalproject.R;
@@ -36,13 +37,15 @@ public class SearchResultArrayAdapator extends ArrayAdapter<SearchResult> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.result_item, parent, false);
         }
         // Look up text views for data population
+        ImageView image = (ImageView) convertView.findViewById(R.id.image);
         TextView title = (TextView) convertView.findViewById(R.id.result_name);
         TextView url = (TextView) convertView.findViewById(R.id.url);
-        TextView snip = (TextView) convertView.findViewById(R.id.snip);
+        //TextView snip = (TextView) convertView.findViewById(R.id.snip);
         // Populate data using SearchResult object
+        current.loadImage(current.getImage(), image);
         title.setText(current.getTitle());
         url.setText(current.getUrl());
-        snip.setText("Rel: " + current.getRel());
+        //snip.setText("Rel: " + current.getRel());
         // Return completed view
         return convertView;
     }

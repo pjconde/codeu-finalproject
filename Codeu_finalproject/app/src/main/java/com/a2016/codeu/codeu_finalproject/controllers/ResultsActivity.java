@@ -52,10 +52,6 @@ public class ResultsActivity extends ListActivity {
         this.mDatabase = FirebaseDatabase.getInstance();
         db = new ResultsDB(mDatabase);
         db.setCustomObjectListener(new ResultsDB.readListener() {
-            @Override
-            public void onObjectReady(String title) {
-                Log.d("Idk", title);
-            }
 
             @Override
             public void onDataLoaded(Map<String, SearchResult> data) {
@@ -70,8 +66,8 @@ public class ResultsActivity extends ListActivity {
 
             @Override
             public void noResults() {
-                Snackbar noResults = Snackbar.make(findViewById(android.R.id.list), "No results found",
-                        Snackbar.LENGTH_INDEFINITE);
+                Snackbar noResults = Snackbar.make(findViewById(android.R.id.list),
+                        "No results found", Snackbar.LENGTH_INDEFINITE);
                 View.OnClickListener sOnClickListener = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -105,8 +101,6 @@ public class ResultsActivity extends ListActivity {
      * It also does the query to firebase
      */
     private void populate(ArrayList<SearchResult> list) {
-        Log.d("Pop", "Populate called and running");
-        Log.d("Pop List", list.toString());
         SearchResultArrayAdapator adapter = new SearchResultArrayAdapator(getApplicationContext(), list);
         setListAdapter(adapter);
         // TODO figure out how to sort by rel score descending. Currently orders smallest first
