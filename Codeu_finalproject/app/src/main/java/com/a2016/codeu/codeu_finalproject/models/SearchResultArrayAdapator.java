@@ -74,7 +74,7 @@ public class SearchResultArrayAdapator extends ArrayAdapter<SearchResult> {
         protected Bitmap doInBackground(String... urls) {
             String urldisplay = urls[0];
             if (urldisplay == null || urldisplay.isEmpty()) {
-                urldisplay = "https://static01.nyt.com/images/icons/t_logo_291_black.png";
+                urldisplay = "https://s0.wp.com/wp-content/themes/vip/nytimes-witw/img/global/nyt-t-logo.png";
             }
             Bitmap mIcon11 = null;
             try {

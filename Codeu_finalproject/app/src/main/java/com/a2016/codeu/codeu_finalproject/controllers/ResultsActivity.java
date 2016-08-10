@@ -20,6 +20,7 @@ import com.a2016.codeu.codeu_finalproject.R;
 import com.a2016.codeu.codeu_finalproject.models.ResultsDB;
 import com.a2016.codeu.codeu_finalproject.models.SearchResult;
 import com.a2016.codeu.codeu_finalproject.models.SearchResultArrayAdapator;
+import com.a2016.codeu.codeu_finalproject.models.TermCounter;
 import com.a2016.codeu.codeu_finalproject.models.WikiSearch;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -80,6 +81,7 @@ public class ResultsActivity extends ListActivity {
         });
         String input = (String) intent.getSerializableExtra("searched");
         this.searched = input.split("\\s+");
+        this.searched = filter(this.searched);
         this.runs = this.searched.length;
         this.ref = mDatabase.getReference();
         //this.results = WikiSearch.search(searched, db);
@@ -94,6 +96,20 @@ public class ResultsActivity extends ListActivity {
             e.printStackTrace();
         }
 
+    }
+
+    private String[] filter(String[] results) {
+        ArrayList<String> temp = new ArrayList<String>();
+        for (String term: results) {
+            if (!TermCounter.stopWords.contains(term)) {
+                temp.add(term);
+            }
+        }
+        String[] output = new String[temp.size()];
+        for (int x = 0; x < output.length; x++) {
+            output[x] = temp.get(x);
+        }
+        return output;
     }
 
     /**

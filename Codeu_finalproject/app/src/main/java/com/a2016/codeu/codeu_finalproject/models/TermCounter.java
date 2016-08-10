@@ -25,7 +25,7 @@ public class TermCounter {
 	private Map<String, Double> tfMap;
 	private Map<String, Integer> map;
 	private String label;
-	private static Set<String> stopWords = new HashSet<String>(Arrays.asList("a", "about", "above",
+	public static Set<String> stopWords = new HashSet<String>(Arrays.asList("a", "about", "above",
 			"above", "across", "after", "afterwards", "again", "against", "all", "almost", "alone",
 			"along", "already","also","although","always","am","among", "amongst", "amoungst",
 			"amount",  "an", "and","another", "any","anyhow","anyone","anything","anyway",
