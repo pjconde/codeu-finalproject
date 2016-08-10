@@ -44,8 +44,31 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     private FloatingActionButton _micButton;
     private AutoCompleteTextView searchBox;
     private final int REQ_CODE_SPEECH_INPUT = 100;
-    String[] list = {"java", "programming", "proactive",
-            "android", "and"}; // list of auto suggestions
+    // list of autosuggestions
+    String[] list = {"java", "programming", "proactive", "disease", "adventure", "strategy",
+            "android", "and", "soldier", "war", "vandalism", "surface", "surprise", "arm",
+            "damage", "children", "explosion", "health", "weapon", "study", "syndrome",
+            "medicine", "science", "country", "countries", "car", "airplane", "government",
+            "population", "death", "city", "nature", "sports", "ship", "tourism", "economy",
+            "sport", "technology", "fight", "suicide", "traffic", "travel", "fitness",
+            "champion", "winner", "attack", "defense", "safety", "oil", "resources", "water",
+            "politics", "love", "peace", "candidate", "school", "university", "development",
+            "vote", "election", "organization", "president", "animals", "plants", "cable",
+            "mission", "corruption", "gang", "protest", "music", "songs", "class", "violation",
+            "shock", "international", "national", "regional", "volcano", "space", "air", "rocks",
+            "computer", "invention", "transportation", "phone", "house", "summer", "winter",
+            "tablet", "key", "chip", "food", "drinks", "temple", "snow", "rain", "storm", "wave",
+            "temperature", "disaster", "weather", "maps", "sister", "brother", "skills", "society",
+            "school", "kids", "teenager", "adolescent", "mother", "socialism", "democracy", "cook",
+            "father", "family", "ocean", "America", "table", "athlete", "fruits", "vegetables",
+            "doctor", "strength", "training", "structure", "religion", "hotels", "language", "town",
+            "difficulty", "beginner", "birth", "task", "objective", "tax", "law", "attorney",
+            "company", "enterprise", "fast", "film", "movie", "event", "theory", "threat", "lunch",
+            "dinner", "restaurant", "sleep", "boys", "girls", "men", "women", "boy", "man", "woman",
+            "code", "difference", "incredible", "academy", "academia", "teach", "learn", "courses",
+            "time", "hour", "shops", "building", "apartment", "complex", "mountain", "hiking",
+            "places", "letter", "message", "continent", "ocean", "sea", "calamity", "competition",
+            "architecture", "art", "museum", "street", "walk", "creation", "email", "taste", "touch"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         toolbar.setTitle("404 Search");
 
         // Populates firebase DB with pages
-//        String[] toBeLoaded = populateLinks();
-//        new RetrieveWiki().execute(toBeLoaded);
+        //String[] toBeLoaded = populateLinks();
+        //new RetrieveWiki().execute(toBeLoaded);
 
         setUpAutoSuggestion();
         setUpSpeech();
