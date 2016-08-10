@@ -14,11 +14,11 @@ public class RetrieveWiki extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] params) {
         ResultsDB db = new ResultsDB(FirebaseDatabase.getInstance());
-        try {
-            db.loadIntoDB((String[]) params);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //db.loadIntoDB((String[]) params);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 }

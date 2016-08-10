@@ -22,16 +22,10 @@ public class SearchResult {
     private String image;
     private String description;
     private double rel;
+    private imageListener listener;
 
     public SearchResult() {
 
-    }
-
-    public SearchResult(String title, String url, String image, double rel) {
-        this.title = title;
-        this.url = url;
-        this.rel = rel;
-        this.image = image;
     }
 
     public SearchResult(String title, String url, String image, String description, double rel) {
@@ -92,7 +86,10 @@ public class SearchResult {
         return result;
     }
 
-    public boolean loadImage(String url, ImageView view) {
+    public InputStream loadImage(String url) {
+        if (url.equals("") || url == null) {
+            return null;
+        }
         try {
             URL imageURL = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) imageURL.openConnection();
@@ -100,20 +97,30 @@ public class SearchResult {
             connection.connect();
 
             InputStream stream = connection.getInputStream();
-            view.setImageBitmap(BitmapFactory.decodeStream(stream));
+//            view.setImageBitmap(BitmapFactory.decodeStream(stream));
 
-            return true;
+            return stream;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     @Override
     public String toString() {
         return String.format("%s with rel of %s", url, rel);
+    }
+
+    public void setCustomObjectListener(SearchResult.imageListener listener) {
+        this.listener = listener;
+    }
+
+    public interface imageListener {
+
+        public void onImageLoad(InputStream stream);
+
     }
 
 }

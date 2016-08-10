@@ -96,25 +96,25 @@ public class ResultsDB implements Serializable {
      * @param tc
      */
     //TODO need to find a way to do snip of line where term is found
-    private void writeTerm(String title, String image, TermCounter tc) {
-        String url = tc.getLabel();
-        String urlKey = generateURLPath(url);
-
-        for (String term: tc.keySet()) {
-            String FBKey = generateFBKey(term);
-            double rel = tc.getTF(term);
-            SearchResult current = new SearchResult(title, url, image, rel);
-
-            if (checkExsistence(term)) {
-                Map<String, Object> currentVals = current.toMap();
-                Map<String, Object> childUpdates = new HashMap<>();
-                childUpdates.put("terms/" + FBKey + urlKey, currentVals);
-                mDatabase.updateChildren(childUpdates);
-            } else {
-                mDatabase.child("terms").child(FBKey).child(urlKey).setValue(current);
-            }
-        }
-    }
+//    private void writeTerm(String title, String image, TermCounter tc) {
+//        String url = tc.getLabel();
+//        String urlKey = generateURLPath(url);
+//
+//        for (String term: tc.keySet()) {
+//            String FBKey = generateFBKey(term);
+//            double rel = tc.getTF(term);
+//            SearchResult current = new SearchResult(title, url, image, rel);
+//
+//            if (checkExsistence(term)) {
+//                Map<String, Object> currentVals = current.toMap();
+//                Map<String, Object> childUpdates = new HashMap<>();
+//                childUpdates.put("terms/" + FBKey + urlKey, currentVals);
+//                mDatabase.updateChildren(childUpdates);
+//            } else {
+//                mDatabase.child("terms").child(FBKey).child(urlKey).setValue(current);
+//            }
+//        }
+//    }
 
     private void getTermLinks(Query query) {
         final Map<String, SearchResult> output = new HashMap<>();
@@ -129,7 +129,8 @@ public class ResultsDB implements Serializable {
                         String title = (String) link.get("title");
                         double rel = (double) link.get("rel");
                         String image = (String) link.get("image");
-                        SearchResult res = new SearchResult(title, url, image, rel);
+                        String des = (String) link.get("description");
+                        SearchResult res = new SearchResult(title, url, image, des, rel);
                         output.put(url, res);
                     }
                     results.add(output);
@@ -158,7 +159,7 @@ public class ResultsDB implements Serializable {
         for (String term : terms) {
             term = term.toLowerCase();
             String key = generateFBKey(term);
-            Query query = mDatabase.child("terms").child(key).child("wiki");
+            Query query = mDatabase.child("terms").child(term);
             getTermLinks(query);
         }
     }
@@ -201,29 +202,29 @@ public class ResultsDB implements Serializable {
      * @param url
      * @param para
      */
-    public void indexPage(String title, String url, String image, Elements para) {
-        TermCounter tc = new TermCounter(url);
-        tc.processElements(para);
-        tc.createTFMap();
-        writeTerm(title, image, tc);
-    }
+//    public void indexPage(String title, String url, String image, Elements para) {
+//        TermCounter tc = new TermCounter(url);
+//        tc.processElements(para);
+//        tc.createTFMap();
+//        writeTerm(title, image, tc);
+//    }
 
     /**
      * Queues up each url to be indexed and added to the data base
      * @param urls
      * @throws IOException
      */
-    public void loadIntoDB(String[] urls) throws IOException {
-        WikiFetcher wf = new WikiFetcher();
-
-        for (String url: urls) {
-            ArrayList<Object> wfReturn = wf.fetchWikipedia(url);
-            String title = (String) wfReturn.get(0);
-            String image = (String) wfReturn.get(3);
-            Elements paragraphs = (Elements) wfReturn.get(1);
-            indexPage(title, url, image, paragraphs);
-        }
-    }
+//    public void loadIntoDB(String[] urls) throws IOException {
+//        WikiFetcher wf = new WikiFetcher();
+//
+//        for (String url: urls) {
+//            ArrayList<Object> wfReturn = wf.fetchWikipedia(url);
+//            String title = (String) wfReturn.get(0);
+//            String image = (String) wfReturn.get(3);
+//            Elements paragraphs = (Elements) wfReturn.get(1);
+//            indexPage(title, url, image, paragraphs);
+//        }
+//    }
 
     /**
      * Checks if a term is already in the data base
