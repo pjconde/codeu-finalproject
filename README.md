@@ -1,6 +1,6 @@
-# CodeU Final Project 2016
+# 404 Search - CodeU Final Project 2016
  
-### TEAM MEMBERS:
+### 404 Team not Found:
    - Agustin Lau
    - Pablojose (PJ) Conde
    - Samuel Soares
